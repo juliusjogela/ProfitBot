@@ -6,6 +6,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 def setup_driver():
     chrome_options = Options()
     # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-logging')  # Suppress extra logs
+    chrome_options.add_argument('--disable-software-rasterizer')
+    chrome_options.add_argument('--log-level=3')  
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')

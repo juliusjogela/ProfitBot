@@ -7,7 +7,7 @@ def main():
     driver = setup_driver()
 
     # Search keyword – can be modified as needed
-    keyword = "macbook air m1"
+    keyword = "Iphone 15 Pro Max"
 
     # Extract listings
     print(f"Searching for '{keyword}' on DoneDeal...")
@@ -16,8 +16,8 @@ def main():
     if listings:
         os.makedirs("data", exist_ok=True)
         df = pd.DataFrame(listings)
-        df.to_csv(os.path.join("data", "coat_listings.csv"), index=False)
-        print(f"✅ Saved {len(listings)} listings to coat_listings.csv")
+        df.to_csv(os.path.join("data", "listings.csv"), index=False)
+        print(f"✅ Saved {len(listings)} listings to listings.csv")
     else:
         print("⚠️ No listings found.")
 
