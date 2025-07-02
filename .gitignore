@@ -1,0 +1,36 @@
+# Byte-compiled / cached
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Selenium driver (if manually downloaded)
+chromedriver.exe
+
+# Logs and debugging
+*.log
+
+# IDE/project config
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Test cache
+.cache/
+*.pytest_cache/
+
+# Local output/data
+data/
+sheets/
+*.csv
+
+# Environment variables
+.env
