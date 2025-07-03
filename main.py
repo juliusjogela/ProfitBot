@@ -1,13 +1,13 @@
 from scraper.donedeal_scraper import extract_listings
 from utils.driver_setup import setup_driver
-from utils.clean_listings import clean_listings_csv
+from utils.clean_listings import clean_listings
 import pandas as pd
 import os
 
 def main():
     driver = setup_driver()
 
-    keyword = "Iphone 15 Pro Max"         # Change this to your desired search term
+    keyword = "Iphone 16"         # Change this to your desired search term
 
     print(f"🔍 Searching for '{keyword}' on DoneDeal...") #Webscraper will extract listings
     listings = extract_listings(driver, keyword)
@@ -19,14 +19,11 @@ def main():
         csv_path = os.path.join("sheets", "listings.csv")        # Save raw CSV
         df.to_csv(csv_path, index=False)
 
-        excel_path = os.path.join("sheets", "listings.xlsx")     # Save raw Excel
-        df.to_excel(excel_path, index=False)
-
         print(f"✅ Saved raw listings to:")
         print(f"    📄 {csv_path}")
-        print(f"    📊 {excel_path}")
 
-        clean_listings_csv("listings.csv")        # Clean and save raw version
+        # Clean the CSV file with keywords and save cleaned version
+        clean_listings("listings.csv", keywords=[keyword], output_filename="cleaned_listings.xlsx")
     else:
         print("⚠️ No listings found.")
 
