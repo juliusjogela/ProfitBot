@@ -16,16 +16,6 @@ class EbayScraper:
         self.ebay_domains = ["co.uk", "com", "ie"]  # UK, US, Ireland
         
     def scrape_sold_listings(self, search_term, max_results=15):
-        """
-        Scrape eBay sold listings for a given search term across multiple domains.
-        
-        Args:
-            search_term: Product to search for
-            max_results: Maximum number of sold listings to retrieve per domain
-            
-        Returns:
-            List of sold listings with title, price, domain, and date info
-        """
         all_sold_items = []
         
         for domain in self.ebay_domains:
@@ -163,10 +153,6 @@ class EbayScraper:
         return currency_map.get(domain, '$')
 
 def normalize_product_name(title):
-    """
-    Normalize product names to group similar items together.
-    This reduces duplicate eBay searches for the same product.
-    """
     if not title:
         return ""
     
@@ -212,10 +198,7 @@ def normalize_product_name(title):
     return normalized
 
 def group_similar_items(df):
-    """
-    Group similar items together to avoid duplicate eBay searches.
-    Returns a DataFrame with unique products and their aggregated data.
-    """
+
     # Add normalized product names
     df['normalized_name'] = df['title'].apply(normalize_product_name)
     
@@ -239,17 +222,6 @@ def group_similar_items(df):
     return grouped
 
 def analyze_profit_opportunities(cleaned_listings_file, driver, output_file="profit_analysis.xlsx"):
-    """
-    Analyze profit opportunities by comparing cleaned DoneDeal listings with eBay sold prices.
-    
-    Args:
-        cleaned_listings_file: Path to cleaned listings Excel file
-        driver: Selenium WebDriver instance
-        output_file: Path to save profit analysis results
-        
-    Returns:
-        DataFrame with profit analysis results
-    """
     print("🚀 Starting profit opportunity analysis...")
     
     # Load cleaned listings

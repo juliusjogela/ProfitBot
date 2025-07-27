@@ -1,57 +1,59 @@
 from scraper.donedeal_scraper import extract_listings
 from utils.driver_setup import setup_driver
 from utils.clean_listings import clean_listings
-from utils.ebay_comparison import analyze_profit_opportunities
 import pandas as pd
 import os
+import time
+import random
 
 def main():
     driver = setup_driver()
-
-    keyword = "Iphone 16"         # Change this to your desired search term
-
-    print(f"🔍 Searching for '{keyword}' on DoneDeal...") #Webscraper will extract listings
-    listings = extract_listings(driver, keyword)
-
-    if listings:
-        os.makedirs("sheets", exist_ok=True)
-        df = pd.DataFrame(listings)
-
-        csv_path = os.path.join("sheets", "listings.csv")        # Save raw CSV
-        df.to_csv(csv_path, index=False)
-
-        print(f"✅ Saved raw listings to:")
-        print(f"    📄 {csv_path}")
-
-        # Clean the CSV file with keywords and save cleaned version
-        print(f"\n🧹 Cleaning and filtering listings...")
-        clean_listings("listings.csv", keywords=[keyword], output_filename="cleaned_listings.xlsx")
-        
-        # Analyze profit opportunities by comparing with eBay sold listings
-        print(f"\n💰 Starting profit analysis with eBay comparison...")
-        try:
-            profit_analysis = analyze_profit_opportunities(
-                cleaned_listings_file="cleaned_listings.xlsx",
-                driver=driver,
-                output_file="profit_opportunities.xlsx"
-            )
+    keyword = "jordans"  # Change this to your desired search term
+    print(f"🔍 Searching for '{keyword}' on DoneDeal...")
+    
+    try:
+        listings = extract_listings(driver, keyword) # Runs the scraper
+        if listings:
+            df = pd.DataFrame(listings)
+            os.makedirs("sheets", exist_ok=True)
             
-            if profit_analysis is not None and len(profit_analysis) > 0:
-                print(f"\n🎯 Profit Analysis Complete!")
-                print(f"📊 Check 'profit_opportunities.xlsx' for detailed results")
-            else:
-                print(f"⚠️ No profit analysis data generated")
+            # Save raw data
+            raw_excel_path = os.path.join("sheets", f"{keyword}_raw_listings.xlsx")
+            df.to_excel(raw_excel_path, index=False) # Saves the raw listings to an excel file
+            print(f"✅ Saved {len(listings)} raw listings to {raw_excel_path}")
+            
+            # Clean the data using the cleaning function
+            print(f"\n🧹 Cleaning listings for '{keyword}'...")
+            cleaned_df = clean_listings(df, keyword, f"{keyword}_cleaned_listings.xlsx")
+            
+            if len(cleaned_df) > 0:
+                print(f"📊 Raw data columns: {list(df.columns)}")
+                print(f"🎯 Final result: {len(cleaned_df)} relevant listings found!")
                 
-        except Exception as e:
-            print(f"❌ Error during profit analysis: {e}")
-        
-    else:
-        print("⚠️ No listings found.")
-
-    # Close the driver
-    driver.quit()
-    print(f"\n✅ ProfitBot analysis complete!")
-
+                # Show top 5 cheapest items
+                print(f"\n💰 Top 5 cheapest {keyword} listings:")
+                for i in range(min(5, len(cleaned_df))):
+                    item = cleaned_df.iloc[i]
+                    print(f"  {i+1}. {item['title']} - {item['price_formatted']} ({item['location']})")
+                    
+            else:
+                print("⚠️ No relevant listings found after cleaning.")
+                
+        else:
+            print("⚠️ No listings found.")
+            
+    except Exception as e:
+        print(f"❌ Error during scraping: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    finally:
+        # Close the driver
+        driver.quit()
+        print(f"\n✅ ProfitBot scraping complete for '{keyword}'!")
+        print(f"📁 Check the 'sheets' folder for:")
+        print(f"   • {keyword}_raw_listings.xlsx (all scraped data)")
+        print(f"   • {keyword}_cleaned_listings.xlsx (filtered & relevant only)")
 
 if __name__ == "__main__":
     main()
